@@ -13,10 +13,6 @@ const StyledButton = styled(Button)`
     height: 2rem;
     border-radius: .2rem;
     cursor: pointer;
-
-    :hover {
-        background: #e2c0ea;
-    }
 `;
 
 export default StyledButton;

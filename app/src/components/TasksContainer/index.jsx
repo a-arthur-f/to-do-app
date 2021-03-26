@@ -10,7 +10,7 @@ function TasksContainer({ className, tasks }) {
 }
 
 const StyledTasksContainer = styled(TasksContainer)`
-    width: 500px;
+    width: 600px;
     margin-top: 2.2rem;
 `;
 

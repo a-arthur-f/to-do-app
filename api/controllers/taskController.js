@@ -20,6 +20,16 @@ async function postTask(req, res) {
     }   
 }
 
+async function updateTask(req, res) {
+    const { id } = req.params;
+    try {
+        await Task.updateOne({_id: id}, {status: true});
+        res.json({ status: 'ok' })
+    } catch(e) {
+        res.json({ status: 'failed' })
+    }
+}
+
 async function deleteTask(req, res) {
     try {
         await Task.deleteOne({_id: req.params.id});
@@ -33,3 +43,4 @@ async function deleteTask(req, res) {
 module.exports.getTask = getTask;
 module.exports.postTask = postTask;
 module.exports.deleteTask = deleteTask;
+module.exports.updateTask = updateTask;

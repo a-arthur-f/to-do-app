@@ -3,20 +3,9 @@ import axios from 'axios';
 import TasksContainer from './components/TasksContainer';
 import Task from './components/Task';
 import AddEdit from './components/AddEdit';
-import styled from 'styled-components';
+import './style.css';
 
 const api = 'http://localhost:8080/task';
-const StyledDiv = styled.div`
-    html, body {
-        width: 100%;
-    }
-
-    margin: auto;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-`;
 
 function App() {
     const [tasks, setTasks] = useState([]);
@@ -24,13 +13,16 @@ function App() {
         fetchData();
     }, []);
     
-    const [mode, setMode] = useState('Add');
     const [text, setText] = useState('');
 
     async function fetchData() {
         try {
             const { data } = await axios(api);
-            setTasks([...data.data]);
+            const sortedArray = [...data.data].sort((a, b) => {
+                if(b.status === false && a.status === true) return 1;
+                return -1;
+            })
+            setTasks([...sortedArray]);
         } catch(e) {
             console.log('Erro ao buscar os dados')
         }
@@ -39,6 +31,7 @@ function App() {
     async function postTask() {
         try {
             await axios.post(api, { text });
+            setText('');
             fetchData();
         } catch(e) {
             console.log('Erro ao adicionar dados');
@@ -54,8 +47,13 @@ function App() {
         }
     }
 
-    function addEdit() {
-        if(mode === 'Add') postTask();
+    async function updateTask(id) {
+        try {
+            await axios.put(`${api}/${id}`);
+            fetchData();
+        } catch(e) {    
+            console.log('Erro ao atualizar tarefa');
+        }
     }
 
     function onChange(e) {
@@ -65,16 +63,17 @@ function App() {
     const tasksArr = tasks.map(e => <Task 
         className="task"
         key={e._id}
-        ask data={{text: e.text, _id: e._id}} 
+        data={{text: e.text, _id: e._id, status: e.status}} 
         deleteTask={deleteTask}
+        updateTask={updateTask}
         />
     );
 
     return (
-        <StyledDiv>
-            <AddEdit className="add-edit" addEdit={addEdit} value={text} onChange={onChange} mode={mode}/>
+        <div className="container">
+            <AddEdit className="add-edit" postTask={postTask} value={text} onChange={onChange}/>
             <TasksContainer className="tasks-container" tasks={tasksArr} />
-        </StyledDiv>
+        </div>
     )
 }
 

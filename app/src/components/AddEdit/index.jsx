@@ -1,8 +1,12 @@
-import React from 'react';
+import { React, createRef } from 'react';
 import styled from 'styled-components';
 import Button from '../Button';
 
-function AddEdit({className, value, onChange, mode, addEdit }) {
+function AddEdit({className, value, onChange, postTask }) {
+    const ref = createRef();
+    function inputFocus() {
+        ref.current.focus();
+    }
     function inputOnChange(e) {
         onChange(e);
     }
@@ -13,11 +17,18 @@ function AddEdit({className, value, onChange, mode, addEdit }) {
                 className="add-edit-input" 
                 type="text" 
                 value={value} 
-                onChange={inputOnChange}/>
+                onChange={inputOnChange}
+                onKeyDown={e => {
+                    if(e.key === 'Enter') postTask();
+                }}
+                ref={ref}/>
             <Button 
                 className="add-edit-button" 
-                onClick={addEdit} 
-                text={mode}
+                onClick={() => {
+                postTask(); 
+                inputFocus();
+            }} 
+                text="Add"
                 background="#bc6dce"
                 color="white"/>
         </div>
@@ -26,7 +37,16 @@ function AddEdit({className, value, onChange, mode, addEdit }) {
 
 const StyledAddEdit = styled(AddEdit)`
     .add-edit-input {
+        width: 300px;
         margin-right: 1.2rem;
+    }
+
+    .add-edit-input:focus {
+        outline: none;
+    }
+
+    .add-edit-button:hover {
+        background: #e2c0ea;
     }
 `;
 
